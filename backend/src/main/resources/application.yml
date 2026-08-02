@@ -1,0 +1,49 @@
+server:
+  port: ${SERVER_PORT:8081}
+
+spring:
+  datasource:
+    url: jdbc:sqlite:${DB_PATH:./data/course.db}
+    driver-class-name: org.sqlite.JDBC
+    hikari:
+      maximum-pool-size: 1
+
+  ai:
+    # DeepSeek Chat（OpenAI 兼容）
+    openai:
+      chat:
+        base-url: ${DEEPSEEK_BASE_URL:https://api.deepseek.com}
+        api-key: ${DEEPSEEK_API_KEY:}
+        options:
+          model: ${DEEPSEEK_MODEL:deepseek-chat}
+      # SiliconFlow Embedding（OpenAI 兼容，bge-m3 免费）
+      embedding:
+        base-url: ${EMBEDDING_BASE_URL:https://api.siliconflow.cn/v1}
+        api-key: ${EMBEDDING_API_KEY:}
+        options:
+          model: ${EMBEDDING_MODEL:BAAI/bge-m3}
+      # 本 demo 不需要语音/图片/审核，禁用以免要求多余 API Key
+      audio:
+        speech:
+          enabled: false
+        transcription:
+          enabled: false
+      image:
+        enabled: false
+      moderation:
+        enabled: false
+    retry:
+      max-attempts: 1
+
+logging:
+  level:
+    root: info
+    com.demo: info
+
+app:
+  # Agent 内部工具循环最大轮数
+  agent-max-tool-rounds: 6
+  # 向量检索 top-k
+  retrieval-top-k: 5
+  # 启动时是否构建向量索引（无 API Key 时可临时关闭）
+  enable-indexer: true

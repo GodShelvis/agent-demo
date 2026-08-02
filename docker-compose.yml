@@ -1,0 +1,24 @@
+# 说明：本 demo 采用"全在线 API"方案（DeepSeek LLM + SiliconFlow Embedding），
+# 向量库为内存 SimpleVectorStore（重启自动重建索引），数据库为本地 SQLite，
+# 因此默认不需要 Docker。此文件仅为可选的后端容器化构建方式。
+
+services:
+  backend:
+    build: ./backend
+    container_name: course-rag-backend
+    ports:
+      - "8081:8081"
+    environment:
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY}
+      DEEPSEEK_BASE_URL: ${DEEPSEEK_BASE_URL:-https://api.deepseek.com}
+      DEEPSEEK_MODEL: ${DEEPSEEK_MODEL:-deepseek-v4-flash}
+      EMBEDDING_BASE_URL: ${EMBEDDING_BASE_URL:-https://api.siliconflow.cn}
+      EMBEDDING_API_KEY: ${EMBEDDING_API_KEY}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-BAAI/bge-m3}
+      SPRING_AI_OPENAI_API_KEY: ${DEEPSEEK_API_KEY}
+    volumes:
+      - db-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  db-data:
